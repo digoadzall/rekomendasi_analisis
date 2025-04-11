@@ -28,13 +28,34 @@ Menjelaskan tujuan dari pernyataan masalah:
 Dataset yang digunakan adalah MovieLens 100K dari GroupLens. Dataset ini berisi metadata dan rating dari ribuan pengguna terhadap berbagai film.
 
 Sumber: MovieLens 100K Dataset / https://grouplens.org/datasets/movielens/100k/
+File yang digunakan: u.item
 
-Dalam proyek ini, hanya file u.item yang digunakan, yang berisi informasi film dan genre.
-- Variabel dalam u.item:
-- movie_id: ID unik untuk film
-- title: Judul film
-- release_date: Tanggal rilis
-- genre: Terdiri dari 19 kolom genre biner seperti Action, Comedy, Romance, dll
+Jumlah Data
+- Jumlah baris (data film): 1682
+- Jumlah kolom: 24 kolom, terdiri dari:
+- 1 kolom ID
+- 3 kolom metadata
+- 19 kolom genre biner
+- 1 kolom URL (tidak digunakan)
+
+Kondisi Data
+- Missing Values:
+  - Kolom video_release_date memiliki banyak missing value dan tidak digunakan dalam proyek.
+  - Tidak ada missing value pada kolom movie_id, title, release_date, dan genre.
+  - Duplikat: Tidak ditemukan duplikasi pada kolom title.
+ 
+Berikut penjelasan masing-masing kolom yang terdapat dalam u.item:
+
+Kolom	Deskripsi
+- movie_id	ID unik dari masing-masing film
+- title	Judul film
+- release_date	Tanggal rilis film (format: dd-MMM-yyyy)
+- video_release_date	Tanggal rilis dalam bentuk video (banyak bernilai kosong, tidak digunakan)
+- IMDb_URL	Tautan ke halaman IMDb (tidak digunakan dalam proyek)
+- genre (19 kolom)	Mewakili genre film dalam bentuk biner (1: film memiliki genre tersebut)
+
+Genre yang tersedia antara lain:
+Action, Adventure, Animation, Children’s, Comedy, Crime, Documentary, Drama, Fantasy, Film-Noir, Horror, Musical, Mystery, Romance, Sci-Fi, Thriller, War, Western, dan Unknown.
 
 ## Data Preparation
 Beberapa tahapan preprocessing dilakukan:
@@ -43,25 +64,72 @@ Beberapa tahapan preprocessing dilakukan:
 Vectorization: Menggunakan CountVectorizer dari scikit-learn untuk mengubah teks genre menjadi fitur numerik
 Tahapan ini penting agar sistem bisa membaca konten genre sebagai masukan bagi perhitungan kemiripan film.
 
+Sebelum melakukan perhitungan kesamaan antar film, dilakukan konversi data genre dari format one-hot encoding (19 kolom biner) menjadi satu kolom teks yang merepresentasikan genre tiap film.
+
+Langkah-langkahnya sebagai berikut:
+
+1. Menggabungkan Genre Menjadi Teks
+Setiap film memiliki genre dalam format biner (0 atau 1) untuk 19 kategori genre. Untuk mempermudah analisis berbasis teks, genre-genre yang memiliki nilai 1 digabungkan menjadi satu string.
+Contoh hasil:
+"Action Adventure Sci-Fi"
+
+2. Ekstraksi Fitur dengan CountVectorizer (Bag of Words)
+Kolom teks genre yang sudah digabungkan kemudian diekstrak menggunakan CountVectorizer. Teknik ini mengubah teks menjadi representasi numerik berdasarkan frekuensi kemunculan setiap genre.
+
+3. Perhitungan Kemiripan antar Film
+Kemiripan antar film dihitung dengan cosine similarity menggunakan hasil vektorisasi dari genre.
+Hasilnya adalah sebuah matriks 2D (cosine_sim) yang berisi nilai kesamaan antar semua pasangan film.
+
+
 ## Modeling
-Modeling dilakukan dengan pendekatan Content-Based Filtering:
-1. CountVectorizer: Membentuk matriks genre berdasarkan frekuensi token
-2. Cosine Similarity: Mengukur jarak antar film berdasarkan vektor genre
-3. Fungsi rekomendasi: Mengambil film dengan skor kemiripan tertinggi
-Kelebihan pendekatan ini:
-- Tidak memerlukan data user/rating
-- Dapat digunakan pada cold-start item (film baru)
-Kekurangan:
-- Rekomendasi terbatas pada konten yang mirip secara literal (misal genre saja)
+Model sistem rekomendasi yang digunakan dalam proyek ini adalah Content-Based Filtering berbasis genre film. Pendekatan ini merekomendasikan film berdasarkan kesamaan konten antar film.
+
+1. Skema Model
+A. Content-Based Filtering (Berbasis Genre):
+Representasi Konten:
+Genre film diubah menjadi format teks dan diproses menggunakan CountVectorizer untuk membentuk matriks fitur berbasis frekuensi.
+B. Perhitungan Kemiripan:
+Kemiripan antar film dihitung menggunakan cosine similarity terhadap vektor genre. Skor ini mengukur seberapa mirip dua film berdasarkan genre-nya.
+C. Fungsi Rekomendasi:
+Sistem mencari film dengan skor cosine similarity tertinggi terhadap film input dan mengembalikan Top-N film sebagai rekomendasi.
+
+2. Kelebihan
+- Tidak membutuhkan data pengguna atau histori rating.
+- Dapat menangani cold-start untuk item baru (film baru).
+
+3. Kekurangan
+- Rekomendasi hanya berdasarkan kemiripan literal genre.
+- Tidak mempertimbangkan preferensi pengguna.
+
+Hasil Rekomendasi (Top-5)
+Contoh hasil top-5 rekomendasi untuk film Toy Story (1995) berdasarkan cosine similarity genre:
+
+ Judul Film	🏷 Genre
+Aladdin and the King of Thieves (1996)	Animation Children's Comedy
+Aladdin (1992)	Animation Children's Comedy Musical
+Goofy Movie, A (1995)	Animation Children's Comedy Romance
+Santa Clause, The (1994)	Children's Comedy
+Home Alone (1990)	Children's Comedy
+Film Input: Toy Story (1995)
+Genre: Animation Children's Comedy
 
 ## Evaluation
-Karena model ini tidak memprediksi label atau rating, evaluasi dilakukan secara manual dan visual:
-- Visualisasi genre paling banyak: Memahami distribusi genre dalam dataset
-- Heatmap cosine similarity: Mengecek apakah genre yang mirip menghasilkan kemiripan tinggi
-- Evaluasi manual: Memeriksa apakah film hasil rekomendasi memiliki genre yang serupa dengan input
+1. Metrik Evaluasi yang Digunakan
+Karena model ini menggunakan pendekatan Content-Based Filtering berbasis atribut kategorikal (genre), maka evaluasi dilakukan dengan pendekatan berbasis konten. Dua metrik yang relevan digunakan:
 
-Contoh:
+- Precision: Persentase film yang direkomendasikan yang benar-benar relevan (memiliki genre yang serupa dengan film input).
+- Recall: Persentase film relevan yang berhasil ditemukan dari seluruh film relevan dalam dataset.
+Dalam konteks ini, dua film dianggap relevan jika mereka memiliki setidaknya satu genre yang sama.
 
-- Input: Toy Story (1995) → Genre: Animation, Children’s, Comedy
-- Rekomendasi: Film dengan genre serupa seperti James and the Giant Peach (1996), Babe (1995), dll
-- Hal ini menunjukkan sistem mampu memberikan rekomendasi berdasarkan kemiripan konten dengan cukup baik.
+2. Karena hanya digunakan satu skema Content-Based Filtering, maka belum ada perbandingan antar skema. Namun, sistem ini sudah menunjukkan performa yang baik dalam mengenali film-film yang sejenis berdasarkan genre-nya.
+
+3. Keterkaitan dengan Business Understanding
+Model ini dibangun untuk menjawab kebutuhan sistem rekomendasi film sederhana yang:
+- tidak bergantung pada histori pengguna (solusi untuk masalah cold-start user)
+- Dapat bekerja dengan informasi film saja (fitur genre)
+- Memberikan rekomendasi cepat dan relevan berdasarkan genre yang disukai pengguna
+
+Ketercapaian Goals:
+- Sistem berhasil memberikan rekomendasi film yang mirip secara genre.
+- Mendukung peningkatan pengalaman pengguna pada platform film.
+- Potensial untuk digunakan sebagai content discovery bagi pengguna baru.
