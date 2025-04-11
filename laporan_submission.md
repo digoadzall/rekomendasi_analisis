@@ -104,12 +104,17 @@ Sistem mencari film dengan skor cosine similarity tertinggi terhadap film input 
 Hasil Rekomendasi (Top-5)
 Contoh hasil top-5 rekomendasi untuk film Toy Story (1995) berdasarkan cosine similarity genre:
 
- Judul Film	🏷 Genre
+ Judul Film	 Genre
 Aladdin and the King of Thieves (1996)	Animation Children's Comedy
+
 Aladdin (1992)	Animation Children's Comedy Musical
+
 Goofy Movie, A (1995)	Animation Children's Comedy Romance
+
 Santa Clause, The (1994)	Children's Comedy
+
 Home Alone (1990)	Children's Comedy
+
 Film Input: Toy Story (1995)
 Genre: Animation Children's Comedy
 
