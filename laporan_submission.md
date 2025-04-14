@@ -38,11 +38,14 @@ Jumlah Data
 - 19 kolom genre biner
 - 1 kolom URL (tidak digunakan)
 
-Kondisi Data
-- Missing Values:
-  - Kolom video_release_date memiliki banyak missing value dan tidak digunakan dalam proyek.
-  - Tidak ada missing value pada kolom movie_id, title, release_date, dan genre.
-  - Duplikat: Tidak ditemukan duplikasi pada kolom title.
+Hasil pengecekan nilai kosong:
+- video_release_date: memiliki 1682 missing values (seluruh baris kosong), sehingga tidak digunakan dalam proyek.
+- IMDb_URL: memiliki 3 missing values, tidak digunakan.
+- release_date: memiliki 1 missing value, namun tidak berdampak terhadap proses pembuatan sistem rekomendasi berbasis genre.
+- Kolom penting seperti movie_id, title, dan kolom genre tidak memiliki missing values.
+
+Duplikat
+Terdapat 18 duplikat pada kolom title, namun kemungkinan besar film berbeda bisa memiliki judul yang sama. Untuk proyek ini, movie_id tetap menjadi ID unik utama.
  
 Berikut penjelasan masing-masing kolom yang terdapat dalam u.item:
 
@@ -64,6 +67,7 @@ Beberapa tahapan preprocessing dilakukan:
 Vectorization: Menggunakan CountVectorizer dari scikit-learn untuk mengubah teks genre menjadi fitur numerik
 Tahapan ini penting agar sistem bisa membaca konten genre sebagai masukan bagi perhitungan kemiripan film.
 
+## Modeling
 Sebelum melakukan perhitungan kesamaan antar film, dilakukan konversi data genre dari format one-hot encoding (19 kolom biner) menjadi satu kolom teks yang merepresentasikan genre tiap film.
 
 Langkah-langkahnya sebagai berikut:
@@ -79,9 +83,9 @@ Kolom teks genre yang sudah digabungkan kemudian diekstrak menggunakan CountVect
 3. Perhitungan Kemiripan antar Film
 Kemiripan antar film dihitung dengan cosine similarity menggunakan hasil vektorisasi dari genre.
 Hasilnya adalah sebuah matriks 2D (cosine_sim) yang berisi nilai kesamaan antar semua pasangan film.
+Kriteria 8] Data Preparation :
+Proses perhitungan kemiripan antar film, khususnya dalam konteks content-based filtering, sebenarnya bukan merupakan bagian dari data preparation. Langkah tersebut lebih tepat dikategorikan sebagai bagian dari tahap modeling. Oleh sebab itu silahkan dihapus saja.
 
-
-## Modeling
 Model sistem rekomendasi yang digunakan dalam proyek ini adalah Content-Based Filtering berbasis genre film. Pendekatan ini merekomendasikan film berdasarkan kesamaan konten antar film.
 
 1. Skema Model
