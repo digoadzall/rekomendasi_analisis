@@ -66,8 +66,6 @@ Beberapa tahapan preprocessing dilakukan:
 - Menggabungkan genre: Genre dibuat menjadi satu kolom genre_text dengan format string
 Vectorization: Menggunakan CountVectorizer dari scikit-learn untuk mengubah teks genre menjadi fitur numerik
 Tahapan ini penting agar sistem bisa membaca konten genre sebagai masukan bagi perhitungan kemiripan film.
-
-## Modeling
 Sebelum melakukan perhitungan kesamaan antar film, dilakukan konversi data genre dari format one-hot encoding (19 kolom biner) menjadi satu kolom teks yang merepresentasikan genre tiap film.
 
 Langkah-langkahnya sebagai berikut:
@@ -80,14 +78,7 @@ Contoh hasil:
 2. Ekstraksi Fitur dengan CountVectorizer (Bag of Words)
 Kolom teks genre yang sudah digabungkan kemudian diekstrak menggunakan CountVectorizer. Teknik ini mengubah teks menjadi representasi numerik berdasarkan frekuensi kemunculan setiap genre.
 
-3. Perhitungan Kemiripan antar Film
-Kemiripan antar film dihitung dengan cosine similarity menggunakan hasil vektorisasi dari genre.
-Hasilnya adalah sebuah matriks 2D (cosine_sim) yang berisi nilai kesamaan antar semua pasangan film.
-Kriteria 8] Data Preparation :
-Proses perhitungan kemiripan antar film, khususnya dalam konteks content-based filtering, sebenarnya bukan merupakan bagian dari data preparation. Langkah tersebut lebih tepat dikategorikan sebagai bagian dari tahap modeling. Oleh sebab itu silahkan dihapus saja.
-
-Model sistem rekomendasi yang digunakan dalam proyek ini adalah Content-Based Filtering berbasis genre film. Pendekatan ini merekomendasikan film berdasarkan kesamaan konten antar film.
-
+## Modeling
 1. Skema Model
 A. Content-Based Filtering (Berbasis Genre):
 Representasi Konten:
