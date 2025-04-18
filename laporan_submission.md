@@ -133,3 +133,7 @@ Ketercapaian Goals:
 - Sistem berhasil memberikan rekomendasi film yang mirip secara genre.
 - Mendukung peningkatan pengalaman pengguna pada platform film.
 - Potensial untuk digunakan sebagai content discovery bagi pengguna baru.
+
+- Untuk evaluasi content-based filtering digunakan metrik precision. Berdasarkan hasil perhitungan manual, nilai precision yang diperoleh adalah sebesar 100%.
+Nilai ini menunjukkan bahwa semua film yang direkomendasikan memiliki genre yang relevan atau sesuai dengan film input, sehingga model mampu memberikan rekomendasi yang sangat tepat sasaran.Evaluasi ini dilakukan dengan membandingkan genre dari film input (Toy Story (1995)) dengan genre masing-masing film rekomendasi. Jika setidaknya ada satu genre yang sama, maka film dianggap relevan.
+
